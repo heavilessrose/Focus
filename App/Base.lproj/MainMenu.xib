@@ -15,25 +15,25 @@
         <window title="Focus" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="367" userLabel="Window">
             <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" topStrut="YES"/>
-            <rect key="contentRect" x="431" y="256" width="539" height="383"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="contentRect" x="431" y="256" width="446" height="215"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <value key="minSize" type="size" width="200" height="100"/>
             <view key="contentView" id="368">
-                <rect key="frame" x="0.0" y="0.0" width="539" height="383"/>
+                <rect key="frame" x="0.0" y="0.0" width="446" height="215"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <tabView translatesAutoresizingMaskIntoConstraints="NO" id="qwq-ag-RRy">
-                        <rect key="frame" x="13" y="10" width="513" height="367"/>
+                        <rect key="frame" x="13" y="10" width="420" height="199"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Preferences" identifier="3" id="kaq-Qq-vqv">
                                 <view key="view" id="TFb-HN-xej">
-                                    <rect key="frame" x="10" y="33" width="493" height="321"/>
+                                    <rect key="frame" x="10" y="33" width="400" height="153"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="IqC-G2-2LK">
-                                            <rect key="frame" x="15" y="221" width="359" height="40"/>
+                                            <rect key="frame" x="15" y="53" width="359" height="40"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Use black and white menu bar icon" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="bOm-Dh-1i1">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -44,7 +44,7 @@
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aRU-mE-xhh">
-                                            <rect key="frame" x="15" y="179" width="359" height="40"/>
+                                            <rect key="frame" x="15" y="11" width="359" height="40"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Start Focus on system startup" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="fHn-V0-960">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -55,7 +55,7 @@
                                             </connections>
                                         </button>
                                         <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2oD-BN-mOQ">
-                                            <rect key="frame" x="15" y="263" width="370" height="42"/>
+                                            <rect key="frame" x="15" y="95" width="370" height="42"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Make menu bar icon toggle Focus instead of showing the popup menu (access it with right-click)" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Z8S-j8-5FA">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -70,18 +70,18 @@
                             </tabViewItem>
                             <tabViewItem label="Blocked Sites" identifier="1" id="8IA-pm-ij0">
                                 <view key="view" id="9B0-XV-VGu">
-                                    <rect key="frame" x="10" y="33" width="493" height="321"/>
+                                    <rect key="frame" x="10" y="33" width="400" height="153"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dsf-q4-Tf8">
-                                            <rect key="frame" x="17" y="37" width="459" height="281"/>
+                                            <rect key="frame" x="17" y="37" width="366" height="113"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <clipView key="contentView" id="GDp-ze-vJh">
-                                                <rect key="frame" x="1" y="17" width="457" height="263"/>
+                                                <rect key="frame" x="1" y="17" width="364" height="95"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" headerView="rzW-mw-xF3" id="6kD-70-dWd">
-                                                        <rect key="frame" x="0.0" y="0.0" width="457" height="263"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="364" height="95"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="2"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -112,7 +112,7 @@
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </clipView>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="x4y-AC-H2k">
-                                                <rect key="frame" x="1" y="94" width="362" height="16"/>
+                                                <rect key="frame" x="1" y="95" width="362" height="15"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="A1w-cE-4KW">
@@ -120,12 +120,12 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <tableHeaderView key="headerView" id="rzW-mw-xF3">
-                                                <rect key="frame" x="0.0" y="0.0" width="457" height="17"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="364" height="17"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </tableHeaderView>
                                         </scrollView>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="IdQ-EV-GOf">
-                                            <rect key="frame" x="443" y="3" width="39" height="32"/>
+                                            <rect key="frame" x="350" y="3" width="39" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="27" id="co0-f2-pwz"/>
@@ -153,7 +153,7 @@
                                             </connections>
                                         </button>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4EW-BC-Q07">
-                                            <rect key="frame" x="410" y="3" width="39" height="32"/>
+                                            <rect key="frame" x="317" y="3" width="39" height="32"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="27" id="TIV-06-JGP"/>
@@ -181,49 +181,22 @@
                                     </constraints>
                                 </view>
                             </tabViewItem>
-                            <tabViewItem label="Help" identifier="3" id="ulx-1o-4Tp">
-                                <view key="view" id="Zze-c6-cCE">
-                                    <rect key="frame" x="10" y="33" width="493" height="321"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jn5-dY-6Zu">
-                                            <rect key="frame" x="15" y="265" width="463" height="32"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Focus Broken? Don't Panic!" id="SkS-Rc-wHb">
-                                                <font key="font" size="22" name=".LucidaGrandeUI"/>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f4r-Ph-rGs">
-                                            <rect key="frame" x="27" y="17" width="451" height="232"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="9PU-Qb-5i0">
-                                                <font key="font" metaFont="system"/>
-                                                <mutableString key="title">Focus works at a deep level of your operating system and a lot of care was put into making sure it only blocks sites you want when you want.  However, sometimes things happen and it's nice to have a manual override should something go wrong. To disable Focus, just go to:  1. System Preferences 2. Network 3. Advanced 4. Proxies 5. Uncheck 'Automatic Proxy Configuration' 6. Click 'OK' 7. Click 'Apply' </mutableString>
-                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                    </subviews>
-                                </view>
-                            </tabViewItem>
                             <tabViewItem label="About" identifier="3" id="l6o-tM-wSt">
                                 <view key="view" id="wtw-pi-FLd">
-                                    <rect key="frame" x="10" y="33" width="493" height="321"/>
+                                    <rect key="frame" x="10" y="33" width="400" height="153"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qTI-gt-YuJ">
-                                            <rect key="frame" x="15" y="228" width="463" height="53"/>
+                                            <rect key="frame" x="137" y="107" width="126" height="36"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Focus" id="kka-Ig-YTh">
-                                                <font key="font" size="39" name="LucidaGrande-Bold"/>
+                                                <font key="font" size="30" name="LucidaGrande-Bold"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f1B-OG-dZ1">
-                                            <rect key="frame" x="184" y="196" width="124" height="17"/>
+                                            <rect key="frame" x="138" y="82" width="124" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Version 1.2.59" id="aZT-8J-3oc">
                                                 <font key="font" metaFont="cellTitle"/>
@@ -232,16 +205,16 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3dR-od-HlN">
-                                            <rect key="frame" x="27" y="84" width="451" height="39"/>
+                                            <rect key="frame" x="15" y="15" width="370" height="28"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" alignment="center" title="Thanks for using Focus and supporting indie development! Send feedback to contact@bradjasper.com" id="2Xp-9q-049">
-                                                <font key="font" metaFont="system"/>
+                                                <font key="font" size="11" name="LucidaGrande"/>
                                                 <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sD9-Il-z28">
-                                            <rect key="frame" x="192" y="155" width="109" height="17"/>
+                                            <rect key="frame" x="146" y="52" width="109" height="17"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="http://heyfocus.com" id="Bsm-yi-lYX">
                                                 <font key="font" metaFont="user"/>
