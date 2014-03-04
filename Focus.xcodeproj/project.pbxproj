@@ -59,7 +59,7 @@
 		A2D57B221842C05B008744DC /* InstallerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D57B211842C05B008744DC /* InstallerManager.m */; };
 		A2F6A4B5184EEE2700B07FC6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A2F6A4AF184EEE2700B07FC6 /* InfoPlist.strings */; };
 		A2F6A4B6184EEE2700B07FC6 /* RHStatusItemView-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A2F6A4B1184EEE2700B07FC6 /* RHStatusItemView-Info.plist */; };
-		A2F6A4B7184EEE2700B07FC6 /* RHStatusItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = A2F6A4B4184EEE2700B07FC6 /* RHStatusItemView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w"; }; };
+		A2F6A4B7184EEE2700B07FC6 /* RHStatusItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = A2F6A4B4184EEE2700B07FC6 /* RHStatusItemView.m */; };
 		E4AD7AA91608DC4C00F594A2 /* BradJasper.focus.HelperTool in Copy Files */ = {isa = PBXBuildFile; fileRef = E4CD036715E7A2C300FDC22C /* BradJasper.focus.HelperTool */; };
 		E4AD7AC216090A3300F594A2 /* XPCService.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AD7AA11608DBEC00F594A2 /* XPCService.m */; };
 		E4AD7AC316090A3600F594A2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E4AD7A9E1608DBEC00F594A2 /* main.m */; };

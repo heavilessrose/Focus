@@ -35,83 +35,45 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
 
 @implementation RHStatusItemView
 
-@synthesize statusItem=_statusItem;
+@synthesize statusItem;
 
-@synthesize image=_image;
-@synthesize alternateImage=_alternateImage;
+@synthesize image;
+@synthesize alternateImage;
 
-@synthesize target=_target;
-@synthesize action=_action;
-@synthesize rightAction=_rightAction;
+@synthesize target;
+@synthesize action;
+@synthesize rightAction;
 
-@synthesize menu=_menu;
-@synthesize rightMenu=_rightMenu;
+@synthesize menu;
+@synthesize rightMenu;
 
 
 #pragma mark - init
 -(id)init{ return [self initWithStatusBarItem:nil]; }
--(id)initWithFrame:(NSRect)frameRect { return [self initWithStatusBarItem:nil];}
+-(id)initWithFrame:(NSRect)frameRect {
+#pragma unused(frameRect)
+    return [self initWithStatusBarItem:nil];
+}
 
--(id)initWithStatusBarItem:(NSStatusItem*)statusItem{
-    if (!statusItem) [NSException raise:NSInvalidArgumentException format:@"-[%@ %@] statusItem should not be nil!", NSStringFromClass(self.class), NSStringFromSelector(_cmd)];
+-(id)initWithStatusBarItem:(NSStatusItem*)aStatusItem{
+    if (!aStatusItem) [NSException raise:NSInvalidArgumentException format:@"-[%@ %@] statusItem should not be nil!", NSStringFromClass(self.class), NSStringFromSelector(_cmd)];
     
     self = [super initWithFrame:NSZeroRect];
     if (self) {
-        self.statusItem = statusItem;
+        self.statusItem = aStatusItem;
     }
     
     return self;
 }
 
-- (void)dealloc{
-    _statusItem = nil;
-
-	[_image release]; _image = nil;
-	[_alternateImage release]; _alternateImage = nil;
-	
-    [_target release]; _target = nil;
-	
-    _action = NULL;
-	_rightAction = NULL;
-    
-	[_menu release]; _menu = nil;
-	[_rightMenu release]; _rightMenu = nil;
-    
-	[super dealloc];
-}
-
-
-#pragma mark - properties
--(void)setStatusItem:(NSStatusItem *)statusItem{
-    if (!statusItem) [NSException raise:NSInvalidArgumentException format:@"-[%@ %@] statusItem should not be nil!", NSStringFromClass(self.class), NSStringFromSelector(_cmd)];
-    _statusItem = statusItem;
-}
-
--(void)setImage:(NSImage *)image{
-    if (image != _image){
-        [_image release];
-        _image = [image retain];
-    }
-    
-    [self setNeedsDisplay];
-}
-
--(void)setAlternateImage:(NSImage *)alternateImage{
-    if (alternateImage != _alternateImage){
-        [_alternateImage release];
-        _alternateImage = [alternateImage retain];
-    }
-    
-    [self setNeedsDisplay];
-}
-
 #pragma mark - NSView
 - (void)drawRect:(NSRect)rect {
 
-    BOOL highlighted = _isMouseDown || _isMenuVisible;
+#pragma unused(rect)
+    BOOL highlighted = isMouseDown || isMenuVisible;
     
     // Draw status bar background, highlighted if menu is showing
-    [_statusItem drawStatusBarBackgroundInRect:[self bounds] withHighlight:highlighted];
+    [self.statusItem drawStatusBarBackgroundInRect:[self bounds] withHighlight:highlighted];
 
     NSRect imageRect = NSInsetRect(self.bounds, RHStatusItemViewImageHPadding, RHStatusItemViewImageVPadding);
     imageRect.origin.y++; //move it up one pix
@@ -128,12 +90,13 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
 
 //left
 -(void)mouseDown:(NSEvent *)theEvent{
-    _isMouseDown = YES;
+#pragma unused(theEvent)
+    isMouseDown = YES;
     [self setNeedsDisplay];
 }
 
 - (void)mouseUp:(NSEvent *)event {
-    if (!_isMouseDown) return; //if showing a menu, the mouse down event dismisses the menu before we see it, so this is a nice way not to re-show the menu on the subsequent mouse up
+    if (!isMouseDown) return; //if showing a menu, the mouse down event dismisses the menu before we see it, so this is a nice way not to re-show the menu on the subsequent mouse up
 
     if([event modifierFlags] & NSControlKeyMask) {
         if (![NSApp sendAction:self.rightAction to:self.target from:self]){
@@ -145,19 +108,21 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
         }
     }
 
-    _isMouseDown = NO;
+    isMouseDown = NO;
     [self setNeedsDisplay];
     
 }
 
 //right
 -(void)rightMouseDown:(NSEvent *)theEvent{
-    _isMouseDown = YES;
+#pragma unused(theEvent)
+    isMouseDown = YES;
     [self setNeedsDisplay];
 }
 
 - (void)rightMouseUp:(NSEvent *)event {
-    if (!_isMouseDown) return; //if showing a menu, the mouse down event dismisses the menu before we see it, so this is a nice way not to re-show the menu on the subsequent mouse up
+#pragma unused(event)
+    if (!isMouseDown) return; //if showing a menu, the mouse down event dismisses the menu before we see it, so this is a nice way not to re-show the menu on the subsequent mouse up
     
     if (![NSApp sendAction:self.rightAction to:self.target from:self]){
         if (self.rightMenu){
@@ -166,7 +131,7 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
             [self popUpMenu];
         }
     }
-    _isMouseDown = NO;
+    isMouseDown = NO;
     [self setNeedsDisplay];
     
 }
@@ -181,20 +146,20 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
     [self popUpMenu:self.rightMenu];
 }
 
--(void)popUpMenu:(NSMenu*)menu{
-    if (menu){
+-(void)popUpMenu:(NSMenu*)aMenu {
+    if (aMenu){
         //register for menu did open and close notifications
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuWillOpen:) name:NSMenuDidBeginTrackingNotification object:menu];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuDidClose:) name:NSMenuDidEndTrackingNotification object:menu];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuWillOpen:) name:NSMenuDidBeginTrackingNotification object:aMenu];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(menuDidClose:) name:NSMenuDidEndTrackingNotification object:aMenu];
         
-        [_statusItem popUpStatusItemMenu:menu];
+        [statusItem popUpStatusItemMenu:aMenu];
     }
 }
 
 
 #pragma mark - NSMenuDidBeginTrackingNotification
 -(void)menuWillOpen:(NSNotification *)notification{
-    _isMenuVisible = YES;
+    isMenuVisible = YES;
     [self setNeedsDisplay];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidBeginTrackingNotification object:notification.object];
@@ -203,7 +168,7 @@ static CGFloat RHStatusItemViewImageVPadding = 3.0f;
 
 #pragma mark - NSMenuDidEndTrackingNotification
 -(void)menuDidClose:(NSNotification *)notification{
-    _isMenuVisible = NO;
+    isMenuVisible = NO;
     [self setNeedsDisplay];
     
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSMenuDidEndTrackingNotification object:notification.object];

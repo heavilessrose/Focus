@@ -32,33 +32,25 @@
 
 @interface RHStatusItemView : NSControl{
     
-    NSStatusItem *_statusItem;
+    id target;
+    SEL action;
+    SEL rightAction;
     
-    NSImage *_image;
-    NSImage *_alternateImage;
-    
-    id _target;
-    SEL _action;
-    SEL _rightAction;
-    
-    NSMenu *_menu;
-    NSMenu *_rightMenu;
-    
-    BOOL _isMouseDown;
-    BOOL _isMenuVisible;
+    BOOL isMouseDown;
+    BOOL isMenuVisible;
 }
 
-@property (nonatomic, assign) NSStatusItem *statusItem; //should never be nil
+@property (atomic, assign) NSStatusItem *statusItem; //should never be nil
 
-@property (nonatomic, retain) NSImage *image;
-@property (nonatomic, retain) NSImage *alternateImage; 
+@property (atomic, retain) NSImage *image;
+@property (atomic, retain) NSImage *alternateImage;
 
-@property (nonatomic, retain) id target;
-@property (nonatomic, assign) SEL action;       //if no action specified, we will try and pop up menu if set.
-@property (nonatomic, assign) SEL rightAction;  //if no rightAction specified, we will try and pop up, in order rightMenu, menu.
+@property (atomic, retain) id target;
+@property (atomic, assign) SEL action;       //if no action specified, we will try and pop up menu if set.
+@property (atomic, assign) SEL rightAction;  //if no rightAction specified, we will try and pop up, in order rightMenu, menu.
 
-@property (nonatomic, retain) NSMenu *menu;
-@property (nonatomic, retain) NSMenu *rightMenu;
+@property (atomic, retain) NSMenu *menu;
+@property (atomic, retain) NSMenu *rightMenu;
 
 -(id)initWithStatusBarItem:(NSStatusItem*)statusItem; //designated initializer
 
