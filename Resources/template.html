@@ -66,6 +66,13 @@
         color: #444;
       }
 
+      /* Hide if on a really small screen (probably a social sharing button) */
+      @media screen and (max-width: 280px) {
+          body, html {
+            display: none !important;
+          }
+      }
+
     </style>
     <script>
       var quotes = [

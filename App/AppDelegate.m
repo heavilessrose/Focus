@@ -308,8 +308,6 @@
         [self.httpProxy start];
     }
     
-    LogMessageCompat(@"goFocusing with hosts = %@", self.focus.hosts);
-    
     [self setStatusItemViewIconOn];
 
     [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {

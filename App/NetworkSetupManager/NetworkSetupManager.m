@@ -42,7 +42,9 @@
     NSString *output = [NSTask runCommand:command];
     NSString *cleanedOutput = [output stringByTrimmingCharactersInSet:[NSCharacterSet newlineCharacterSet]];
   
-    // Temporary hack to see if this fixes Focus for people
+    // Hack to fix AirPort networks
+    // On some Mac's the network device is reported as AirPort which
+    // can't be operated on. So we assume it's Wi-Fi which is almost always right
     if ([cleanedOutput isEqualToString:@"AirPort"]) {
         return @"Wi-Fi";
     }
@@ -89,11 +91,12 @@
 
 + (bool)unsetAutoProxyURLforNetworkAdapter:(NSString *)networkAdapter
 {
-    [NetworkSetupManager setAutoProxyURL:@"none" forNetworkAdapter:networkAdapter];
+    // Can't find a way to set auto proxy url to null :( - chose to use space as least bad thing we can do
+    [NetworkSetupManager setAutoProxyURL:@" " forNetworkAdapter:networkAdapter];
 
     NSString *command = [NSString stringWithFormat:@"%@ -setautoproxystate '%@' off", NETWORKSETUP, networkAdapter];
     
-    LogMessageCompat(@"command = %@", command);
+    LogMessageCompat(@"unsetAutoProxyURLforNetworkAdapter = %@", command);
     
     NSError *error;
     NSString *output = [NSTask runCommand:command error:&error];
