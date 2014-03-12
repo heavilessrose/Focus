@@ -23,6 +23,13 @@
 - (NSString *)output
 {
     NSMutableString *template = [NSMutableString stringWithString:@"function FindProxyForURL(url, host) {"];
+
+    // TODO: Clean this up. This is a temporary fix for like buttons but this should be incorporated into a better exclusion list
+    [template appendString:@"\n\tif (dnsDomainIs(host, 'ak.facebook.com')) { return 'DIRECT'; }"];
+    [template appendString:@"\n\tif (dnsDomainIs(host, 'connect.facebook.net')) { return 'DIRECT'; }"];
+    [template appendString:@"\n\tif (host == 'www.facebook.com' && url.indexOf('/plugins/like.php') != -1) { return 'DIRECT'; }"];
+    [template appendString:@"\n\tif (dnsDomainIs(host, 'platform.twitter.com')) { return 'DIRECT'; }"];
+
     
     for (NSString *host in self.hosts) {
         NSString *line = [NSString stringWithFormat:@"\n    if (dnsDomainIs(host,'%@')) return 'PROXY %@';", host, self.proxy];
