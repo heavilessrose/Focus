@@ -75,18 +75,31 @@
 
     </style>
     <script>
-      var quotes = [
-        "Amateurs sit and wait for inspiration, the rest of us just get up and go to work.|Stephen King",
-        "All men dream, but not equally. Those who dream by night in the dusty recesses of their minds, wake in the day to find that it was vanity: but the dreamers of the day are dangerous men, for they may act on their dreams with open eyes, to make them possible.|T. E. Lawrence",
-        "Action is the foundational key to all success.|Pablo Picasso",
-        "There is no substitute for hard work.|Thomas Edison",
-        "Focused, hard work is the real key to success. Keep your eyes on the goal, and just keep taking the next step towards completing it.|John Carmack",
-        "Opportunities are usually disguised as hard work, so most people don't recognize them.|Ann Landers",
-        "It's hard to beat a person who never gives up.|Babe Ruth",
-        "The mind is everything. What you think you become.|Buddha",
-        "Eighty percent of success is showing up.|Woody Allen",
-        "Fall seven times and stand up eight.",
-      ];
+    function getRandomQuote() {
+          var quotes = [
+            "Amateurs sit and wait for inspiration, the rest of us just get up and go to work.|Stephen King",
+            "All men dream, but not equally. Those who dream by night in the dusty recesses of their minds, wake in the day to find that it was vanity: but the dreamers of the day are dangerous men, for they may act on their dreams with open eyes, to make them possible.|T. E. Lawrence",
+            "Action is the foundational key to all success.|Pablo Picasso",
+            "There is no substitute for hard work.|Thomas Edison",
+            "Focused, hard work is the real key to success. Keep your eyes on the goal, and just keep taking the next step towards completing it.|John Carmack",
+            "Opportunities are usually disguised as hard work, so most people don't recognize them.|Ann Landers",
+            "It's hard to beat a person who never gives up.|Babe Ruth",
+            "The mind is everything. What you think you become.|Buddha",
+            "Eighty percent of success is showing up.|Woody Allen",
+            "Fall seven times and stand up eight.",
+            "The best time to plant a tree is 20 years ago. The second best time is now.|Chinese Proverb",
+            "We don’t make movies to make money, we make money to make more movies.|Walt Disney",
+          ];
+
+          var random_quote;
+          if (Math.floor(Math.random() * 1000) == 0) { // rare quote :)
+              random_quote = document.getElementById("hsthompson").innerHTML;
+          } else {
+              random_quote = quotes[Math.floor(Math.random() * quotes.length)];
+          }
+
+          return random_quote.split("|");
+    }
     </script>
   </head>
 
@@ -98,8 +111,8 @@
         <blockquote id="quote"></blockquote>
         <cite id="cite"></cite>
         <script>
-          var random_quote = quotes[Math.floor(Math.random() * quotes.length)];
-          var quote_parts = random_quote.split("|");
+
+          var quote_parts = getRandomQuote();
           var quote = quote_parts[0];
           var author = quote_parts[1];
 
