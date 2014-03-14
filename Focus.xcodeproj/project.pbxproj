@@ -39,6 +39,9 @@
 		A283BEBB1846C74A00A45D96 /* PACFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2CF79C21845656600A1566A /* PACFileManager.m */; };
 		A289EC09185D2F4C0067C19D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A21B6163184140B70085C4B7 /* CFNetwork.framework */; };
 		A29A05CF1842E71B0022901D /* ConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A29A05CE1842E71B0022901D /* ConnectionManager.m */; };
+		A2A5296818D3C41E0038687A /* help.html in Resources */ = {isa = PBXBuildFile; fileRef = A2A5296718D3C41E0038687A /* help.html */; };
+		A2A5296A18D3C5CD0038687A /* help.css in Resources */ = {isa = PBXBuildFile; fileRef = A2A5296918D3C5CD0038687A /* help.css */; };
+		A2A5296C18D3C7AF0038687A /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = A2A5296B18D3C7AF0038687A /* icon.png */; };
 		A2B2A0751846BC47004C8A81 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4ED7B8315E79B83002AD912 /* Cocoa.framework */; };
 		A2B2A0771846BC62004C8A81 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A21B6165184140BE0085C4B7 /* SystemConfiguration.framework */; };
 		A2B2A0781846BC70004C8A81 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C372F915E7D4D8007554D3 /* Security.framework */; };
@@ -168,6 +171,9 @@
 		A2703164184D90BE00D11B81 /* FocusHTTProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FocusHTTProxy.m; sourceTree = "<group>"; };
 		A29A05CD1842E71B0022901D /* ConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectionManager.h; sourceTree = "<group>"; };
 		A29A05CE1842E71B0022901D /* ConnectionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionManager.m; sourceTree = "<group>"; };
+		A2A5296718D3C41E0038687A /* help.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = help.html; path = Resources/help.html; sourceTree = "<group>"; };
+		A2A5296918D3C5CD0038687A /* help.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = help.css; path = Resources/help.css; sourceTree = "<group>"; };
+		A2A5296B18D3C7AF0038687A /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = icon.png; path = Resources/icon.png; sourceTree = "<group>"; };
 		A2B97458185046040005D840 /* template.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; name = template.html; path = Resources/template.html; sourceTree = "<group>"; };
 		A2BAE76D1852385700617287 /* Focus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Focus.entitlements; sourceTree = "<group>"; };
 		A2CF79C11845656600A1566A /* PACFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PACFileManager.h; sourceTree = "<group>"; };
@@ -406,6 +412,9 @@
 				A2307CE8184D5BCF00C2F291 /* focus */,
 				A25242E618629C630097F28A /* FocusBlackholeProxy.py */,
 				A2B97458185046040005D840 /* template.html */,
+				A2A5296918D3C5CD0038687A /* help.css */,
+				A2A5296718D3C41E0038687A /* help.html */,
+				A2A5296B18D3C7AF0038687A /* icon.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -680,10 +689,13 @@
 				E4CBCCF015EBC55F0081DF5C /* Common.strings in Resources */,
 				E4CBCD2A15EC191D0081DF5C /* InfoPlist.strings in Resources */,
 				A25242E718629C630097F28A /* FocusBlackholeProxy.py in Resources */,
+				A2A5296818D3C41E0038687A /* help.html in Resources */,
 				A2307CE9184D5BCF00C2F291 /* focus in Resources */,
 				A2F6A4B6184EEE2700B07FC6 /* RHStatusItemView-Info.plist in Resources */,
+				A2A5296A18D3C5CD0038687A /* help.css in Resources */,
 				A2D11009187527E900245118 /* dsa_pub.pem in Resources */,
 				A2D57B0518428439008744DC /* README.md in Resources */,
+				A2A5296C18D3C7AF0038687A /* icon.png in Resources */,
 				A2D57B0418428439008744DC /* MIT-LICENSE in Resources */,
 				A2F6A4B5184EEE2700B07FC6 /* InfoPlist.strings in Resources */,
 				A2B9745A185046040005D840 /* template.html in Resources */,

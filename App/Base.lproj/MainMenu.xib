@@ -341,10 +341,10 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="tX6-dC-fu6"/>
-                <menuItem title="Uninstall Focus..." id="DAR-xU-qnQ">
+                <menuItem title="Help" id="DAR-xU-qnQ">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="clickedUninstallFocus:" target="373" id="1EO-7R-QIb"/>
+                        <action selector="clickedHelp:" target="373" id="eRd-m0-dY8"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Quit Focus" id="MYA-IV-7qi">

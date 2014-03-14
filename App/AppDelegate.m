@@ -506,8 +506,18 @@
     }
 }
 
-- (IBAction)clickedUninstallFocus:(id)sender {
+- (IBAction)clickedHelp:(NSMenuItem *)sender {
 #pragma unused(sender)
+    [self showHelp];
+}
+
+- (void)showHelp
+{
+    NSURL * helpFile = [[NSBundle mainBundle] URLForResource:@"help" withExtension:@"html"];
+    [[NSWorkspace sharedWorkspace] openURL:helpFile];
+}
+
+- (void)clickedUninstallFocus {
     
     NSAlert *alertBox = [[NSAlert alloc] init];
     [alertBox setMessageText:@"Are you sure you want to uninstall Focus?"];
@@ -682,6 +692,8 @@
         [self goFocus];
     } else if ([action isEqualToString:@"unfocus"]) {
         [self goUnfocus];
+    } else if ([action isEqualToString:@"uninstall"]) {
+        [self clickedUninstallFocus];
     }
 }
 

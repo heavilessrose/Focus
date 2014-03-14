@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Focus is a Mac app that blocks distracting websites so you can boost your productivity">
+        <meta name="author" content="Brad Jasper">
+
+
+        <title>Focus Help</title>
+        <link href="help.css" rel="stylesheet">
+    </head>
+    
+    <body data-spy="scroll" data-offset="0" data-target="#theMenu">
+        
+        <section id="features" name="features"></section>
+        <div class="wrap">
+            <div class="container">
+                <div class="row">
+                    <img src="icon.png" />
+                    <br />
+                    <h1>Focus Help</h1>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+                    
+                    <div class="col-lg-6 col-lg-offset-3 questions">
+                        <h4>How do I manually disable Focus?</h4>
+                        <p>Focus takes extreme care to only block your Internet when you want—but if it's broken and you need to manually disable it, go to System Preferences -> Network -> Advanced -> Proxies -> Uncheck Automatic Proxy Configuration.</p>
+                        
+                        <h4>How do I completely uninstall Focus?</h4>
+                        <p><a href="focus://uninstall">Click here to uninstall Focus.</a></p>
+                        
+                        <h4>How can I start Focus from the command line?</h4>
+                        <p>There are two very simple scripts to do this, <a href="https://raw.github.com/bradjasper/Focus/master/Scripts/focus">focus</a> and <a href="https://raw.github.com/bradjasper/Focus/master/Scripts/unfocus">unfocus</a>. Look at the source to see how easy it is to hook into Focus and control it from your own scripts.</p>
+                        
+                        <h4>Does Focus read any of my traffic?</h4>
+                        <p>No. Focus does setup a local proxy server to intercept requests, but everything is self contained on your computer.</p>
+                        
+                        <h4>Does Focus work on HTTPS?</h4>
+                        <p>Focus will block HTTPS sites, but can't display a custom message.</p>
+                        
+                        <h4>What if I have an existing PAC file?</h4>
+                        <p>Focus currently won't work if you use an existing PAC file, but this will be fixed in a future update.</p>
+                        
+                        <h4>Is it possible to run Focus in my dock rather than menubar?</h4>
+                        <p>Currently no but this is a planned feature.</p>
+                        
+                        <h4>Do you have a grayscale icon? I don't like colorful icons in my menubar.</h4>
+                        <p>Yes! This has been added as a configurable option.</p>
+                        
+                        <h4>Focus doesn't work in Firefox</h4>
+                        <p>Firefox has a way to override the system-wide proxy which can sometimes cause problems. To fix this go to Firefox, Preferences, Advanced, Network, Settings and change the selected option to &quot;Use system proxy setting&quot;</p>
+                        
+                        <h4>Want to modify Focus' source code?</h4>
+                        <p>Go for it! <a href="http://github.com/bradjasper/focus">Focus is open-source on GitHub</a>.</p>
+                        
+                        <h4>Want to see how Focus was built?</h4>
+                        <p>I wrote up a small case study on my website about <a href="http://bradjasper.com/blog/case-study-focus">how I made Focus</a>.</p>
+                        
+                        <h4>I have another question you didn't answer</h4>
+                        <p>Please <a href="mailto:contact@bradjasper.com">email me</a>, I'm happy to answer any questions!</p>
+                        
+                        
+                        <br><br>
+                        
+                        <p>I love hearing feedback, say hello <a href="https://twitter.com/bradjasper">@bradjasper</a></p>.
+                        
+                    </div>
+                    
+                    
+                </div>
+            </div><!-- /container -->
+        </div><!-- /f -->
+    </body>
+</html>
