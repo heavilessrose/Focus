@@ -104,12 +104,12 @@
     
     LogMessageCompat(@"Number of runs = %ld", numRuns);
     
+    self.installerManager = [[InstallerManager alloc] init];
+    [self.installerManager run];
+
     if (numRuns == 1) {
         [self firstRun];
     }
-    
-    self.installerManager = [[InstallerManager alloc] init];
-    [self.installerManager run];
     
     // If we're not installed—just quit
     if (!self.installerManager.installed) {
@@ -178,6 +178,22 @@
     LogMessageCompat(@"Performing first time run setup");
     [self.userDefaults setObject:[Focus getDefaultHosts] forKey:@"blockedSites"];
     [self.userDefaults synchronize];
+    
+    
+    NSAlert *alertBox = [[NSAlert alloc] init];
+    [alertBox setMessageText:@"Start Focus on startup?"];
+    [alertBox setInformativeText:@"Do you want to start Focus automatically when your computer boots? (you can always change this later)"];
+    [alertBox addButtonWithTitle:@"OK"];
+    [alertBox addButtonWithTitle:@"Cancel"];
+    [alertBox setAlertStyle:NSWarningAlertStyle];
+    NSInteger buttonClicked = [alertBox runModal];
+    
+    if (buttonClicked == NSAlertFirstButtonReturn) {
+        NSLog(@"User does want to start focus automatically");
+        [self.installerManager installAutoLaunch];
+        self.launchCheckbox.state = [self.installerManager willAutoLaunch];
+    }
+    
 }
 
 - (void)loadBlockedSitesData
