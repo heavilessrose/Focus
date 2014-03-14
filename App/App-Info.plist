@@ -39,5 +39,16 @@
 	<string>http://www.heyfocus.com/appcast.xml</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Focus URL</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>focus</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

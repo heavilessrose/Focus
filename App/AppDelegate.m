@@ -159,6 +159,10 @@
         LogMessageCompat(@"Focus was active when it started. Deactivating");
         [self goUnfocus];
     }
+
+    // Register URL scheme
+    NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
+    [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
 }
 
 - (void)firstRun
@@ -560,6 +564,21 @@
         [self.blockedSitesArrayController removeObjectAtArrangedObjectIndex:(NSUInteger)selectedRow];
     } else {
         [self saveBlockedSitesData];
+    }
+}
+
+- (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+#pragma unused(replyEvent)
+
+    NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
+    NSURL *url = [NSURL URLWithString:urlStr];
+    NSString *action = [[url host] lowercaseString];
+
+    if ([action isEqualToString:@"focus"]) {
+        [self goFocus];
+    } else if ([action isEqualToString:@"unfocus"]) {
+        [self goUnfocus];
     }
 }
 
