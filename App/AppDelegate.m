@@ -30,6 +30,9 @@
 @property (strong, nonatomic) NSMutableArray *blockedSites;
 @property (strong, nonatomic) NSUserDefaults *userDefaults;
 @property (strong, nonatomic) IBOutlet NSButton *removeBlockedSite;
+@property (strong, nonatomic) IBOutlet NSTextField *onFocusScript;
+@property (strong, nonatomic) IBOutlet NSTextField *onUnfocusScript;
+
 @end
 
 @implementation AppDelegate
@@ -141,6 +144,11 @@
     
     // Setup monochrome toggle checkbox
     self.monochromeIconCheckbox.state = [self.userDefaults boolForKey:@"monochromeIcon"];
+
+    // Setup advanced script hooks
+    [self.onUnfocusScript setObjectValue:[self.userDefaults objectForKey:@"onUnfocusScript"]];
+    [self.onFocusScript setObjectValue:[self.userDefaults objectForKey:@"onFocusScript"]];
+
 
     // Set active version on about screen
     [self.versionLabel setStringValue:[NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
@@ -306,13 +314,14 @@
 
 - (void)goFocus
 {
+    LogMessageCompat(@"goFocusing");
+
+    [self setStatusItemViewIconOn];
     
     if (![FocusHTTProxy isRunning]) {
         LogMessageCompat(@"HTTP Proxy IS NOT RUNNING...starting it!");
         [self.httpProxy start];
     }
-    
-    [self setStatusItemViewIconOn];
 
     [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
         if (connectError != nil) {
@@ -326,6 +335,11 @@
         }] focus:self.installerManager.authorization blockedHosts:self.focus.hosts withReply:^(NSError *commandError) {
             if (commandError != nil) {
                 [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
+            } else {
+                NSString *script = [self.userDefaults objectForKey:@"onFocusScript"];
+                if (script) {
+                    [self runScript:script];
+                }
             }
         }];
     }];
@@ -349,6 +363,11 @@
         }] unfocus:self.installerManager.authorization withReply:^(NSError *commandError) {
             if (commandError != nil) {
                 [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
+            } else {
+                NSString *script = [self.userDefaults objectForKey:@"onUnfocusScript"];
+                if (script) {
+                    [self runScript:script];
+                }
             }
         }];
     }];
@@ -535,6 +554,49 @@
     }
 }
 
+- (NSString *)getExecutableFromFileDialog {
+
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    NSInteger result = [panel runModal];
+
+    if (result == NSOKButton) {
+        return [[panel URL] path];
+    }
+
+    return nil;
+}
+
+- (IBAction)onFocusScriptButtonClicked:(NSButton *)sender {
+#pragma unused(sender)
+
+    NSString *script = [self getExecutableFromFileDialog];
+
+    if (script) {
+        [self.onFocusScript setObjectValue:script];
+        [self.userDefaults setObject:script forKey:@"onFocusScript"];
+        [self.userDefaults synchronize];
+    }
+
+    NSLog(@"Setting focus script = %@", [self.onFocusScript objectValue]);
+}
+
+
+- (IBAction)onUnfocusScriptButtonClicked:(NSButton *)sender {
+#pragma unused(sender)
+
+    NSString *script = [self getExecutableFromFileDialog];
+
+    if (script) {
+        [self.onUnfocusScript setObjectValue:script];
+        [self.userDefaults setObject:script forKey:@"onUnfocusScript"];
+        [self.userDefaults synchronize];
+    }
+
+    NSLog(@"Setting unfocus script = %@", [self.onUnfocusScript objectValue]);
+}
+
+# pragma mark - Table View
+
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
 #pragma unused(notification)
@@ -551,14 +613,12 @@
 {
     NSDictionary *userInfo = [notification userInfo];
     NSTextView *aView = [userInfo valueForKey:@"NSFieldEditor"];
+
     NSString *savedObject = [aView string];
-    NSLog(@"controlTextDidEndEditing %@", savedObject);
-    
     long selectedRow = [self.blockedSitesTableView selectedRow];
-    NSLog(@"Selected row = %ld", selectedRow);
-    
+
     bool empty = [[savedObject stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0;
-    
+
     if (empty) {
         LogMessageCompat(@"Row is empty, let's delete it");
         [self.blockedSitesArrayController removeObjectAtArrangedObjectIndex:(NSUInteger)selectedRow];
@@ -566,6 +626,23 @@
         [self saveBlockedSitesData];
     }
 }
+
+- (void)controlTextDidChange:(NSNotification *)notification {
+    NSTextField *textField = [notification object];
+
+    // onFocusScript text box
+    if (textField.tag == 445) {
+        [self.userDefaults setObject:[textField objectValue] forKey:@"onFocusScript"];
+        [self.userDefaults synchronize];
+
+    // onUnfocusScript text box
+    } else if (textField.tag == 446) {
+        [self.userDefaults setObject:[textField objectValue] forKey:@"onUnfocusScript"];
+        [self.userDefaults synchronize];
+    }
+}
+
+# pragma mark - URL Scheme
 
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
@@ -580,6 +657,42 @@
     } else if ([action isEqualToString:@"unfocus"]) {
         [self goUnfocus];
     }
+}
+
+-(void)runScript:(NSString*)scriptName
+{
+    NSString *contents = [[NSString stringWithContentsOfFile:scriptName encoding:NSUTF8StringEncoding error:NULL] lowercaseString];
+    
+    if ([contents rangeOfString:@"focus://"].location != NSNotFound) {
+        [self error:@"Focus & Unfocus scripts cannot contain the string 'focus://'. You're not allowed to change Focus state from these scripts, otherwise it might result in an infinite loop."];
+        return;
+    }
+
+    NSLog(@"Running script = %@", scriptName);
+
+    NSTask *task;
+    task = [[NSTask alloc] init];
+    [task setLaunchPath:@"/bin/sh"];
+    
+    [task setArguments:@[scriptName]];
+    
+    NSPipe *pipe;
+    pipe = [NSPipe pipe];
+    [task setStandardOutput: pipe];
+    
+    NSFileHandle *file;
+    file = [pipe fileHandleForReading];
+    
+    [task launch];
+    return;
+    
+    NSData *data;
+    data = [file readDataToEndOfFile];
+    
+    NSString *string;
+    string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    
+    NSLog (@"script returned:\n%@", string);
 }
 
 @end
