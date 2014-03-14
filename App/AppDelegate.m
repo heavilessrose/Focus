@@ -145,13 +145,11 @@
     // Setup monochrome toggle checkbox
     self.monochromeIconCheckbox.state = [self.userDefaults boolForKey:@"monochromeIcon"];
 
-    // Setup advanced script hooks
-    [self.onUnfocusScript setObjectValue:[self.userDefaults objectForKey:@"onUnfocusScript"]];
-    [self.onFocusScript setObjectValue:[self.userDefaults objectForKey:@"onFocusScript"]];
-
+    // Setup advanced script hooks]
+    [self setupScriptHooks];
 
     // Set active version on about screen
-    [self.versionLabel setStringValue:[NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
+    [self setupAboutVersion];
     
     // Setup website link in about
     [self setupWebsiteLabel];
@@ -171,6 +169,18 @@
     // Register URL scheme
     NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
     [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+
+- (void)setupAboutVersion
+{
+    [self.versionLabel setStringValue:[NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
+}
+
+- (void)setupScriptHooks
+{
+    [self.onUnfocusScript setObjectValue:[self.userDefaults objectForKey:@"onUnfocusScript"]];
+    [self.onFocusScript setObjectValue:[self.userDefaults objectForKey:@"onFocusScript"]];
+
 }
 
 - (void)firstRun
