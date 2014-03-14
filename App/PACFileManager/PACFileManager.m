@@ -29,6 +29,8 @@
     [template appendString:@"\n\tif (dnsDomainIs(host, 'connect.facebook.net')) { return 'DIRECT'; }"];
     [template appendString:@"\n\tif (host == 'www.facebook.com' && url.indexOf('/plugins/like.php') != -1) { return 'DIRECT'; }"];
     [template appendString:@"\n\tif (dnsDomainIs(host, 'platform.twitter.com')) { return 'DIRECT'; }"];
+    [template appendString:@"\n\tif (dnsDomainIs(host, 'assets.pinterest.com')) { return 'DIRECT'; }"];
+    [template appendString:@"\n\tif (dnsDomainIs(host, 'apis.google.com')) { return 'DIRECT'; }"];
 
     
     for (NSString *host in self.hosts) {
