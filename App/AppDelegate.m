@@ -115,8 +115,8 @@
 // Focus collects anonymous analytics on basic usage to improve the product
 - (void)setupAnalytics
 {
+    [KeenClient disableGeoLocation];
     [KeenClient sharedClientWithProjectId:KEEN_PROJECT_ID andWriteKey:KEEN_WRITE_KEY andReadKey:KEEN_READ_KEY];
-    [KeenClient disableGeoLocation]; // without this the user gets a prompt
 }
 
 - (void)setupSettingsDialog
