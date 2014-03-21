@@ -177,10 +177,8 @@
     [KeenClient sharedClientWithProjectId:KEEN_PROJECT_ID andWriteKey:KEEN_WRITE_KEY andReadKey:KEEN_READ_KEY];
     [KeenClient disableGeoLocation];
     
-    // Set onload event
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:@"load", @"event", nil];
-    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_COLLECTION error:nil];
-    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+    [self trackEvent:@"load"];
+    
 }
 
 - (void)setupAboutVersion
@@ -353,6 +351,8 @@
 - (void)goFocus
 {
     LogMessageCompat(@"goFocusing");
+    
+    [self trackEvent:@"focus"];
 
     [self setStatusItemViewIconOn];
     
@@ -387,6 +387,8 @@
 {
     LogMessageCompat(@"goUnfocusing");
     
+    [self trackEvent:@"unfocus"];
+    
     [self setStatusItemViewIconOff];
  
     [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
@@ -414,6 +416,9 @@
 - (void)error:(NSString *)msg
 {
     LogMessageCompat(@"ERROR = %@", msg);
+    
+    // TODO: Add more detailed error tracking here without leaking any private data...
+    [self trackEvent:@"error"];
 
     NSAlert *alertBox = [[NSAlert alloc] init];
     [alertBox setMessageText:@"An Error Occurred"];
@@ -425,6 +430,8 @@
 - (void)uninstall
 {
     [self goUnfocus];
+    
+    [self trackEvent:@"uninstall"];
     
     // Reset NSUserDefaults — has to be done here rather than on helper
     NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
@@ -547,6 +554,7 @@
 
 - (IBAction)clickedSettings:(id)sender {
 #pragma unused(sender)
+    [self trackEvent:@"settings"];
     [self.window makeKeyAndOrderFront:nil];
     [NSApp activateIgnoringOtherApps:YES];
 }
@@ -678,6 +686,8 @@
 - (void)controlTextDidChange:(NSNotification *)notification {
     NSTextField *textField = [notification object];
 
+    // TODO: Is there a better way to handle multiple tagField's than tag's?
+    
     // onFocusScript text box
     if (textField.tag == 445) {
         [self.userDefaults setObject:[textField objectValue] forKey:@"onFocusScript"];
@@ -743,6 +753,13 @@
     string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     
     NSLog (@"script returned:\n%@", string);
+}
+
+- (void)trackEvent:(NSString *)eventName
+{
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:eventName, @"event", nil];
+    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_COLLECTION error:nil];
+    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
 @end
