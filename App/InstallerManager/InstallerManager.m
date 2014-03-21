@@ -26,6 +26,13 @@
 @synthesize authorization;
 @synthesize installed;
 
++ (InstallerManager *)setup
+{
+    InstallerManager *installManager = [[InstallerManager alloc] init];
+    [installManager run];
+    return installManager;
+}
+
 - (void)run
 {
     self.installed = YES;

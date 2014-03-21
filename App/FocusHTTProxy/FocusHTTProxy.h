@@ -11,6 +11,7 @@
 
 @interface FocusHTTProxy : FFYDaemonController
 
++ (FocusHTTProxy *)setup;
 + (bool)isRunning;
 + (bool)killZombiedProxies;
 

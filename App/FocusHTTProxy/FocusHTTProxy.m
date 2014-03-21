@@ -14,6 +14,14 @@
 
 @implementation FocusHTTProxy
 
++ (FocusHTTProxy *)setup
+{
+    [FocusHTTProxy killZombiedProxies];
+    FocusHTTProxy *httpProxy = [[FocusHTTProxy alloc] init];
+    [httpProxy start];
+    return httpProxy;
+}
+
 - (id)init
 {
     self = [super self];

@@ -1,17 +1,21 @@
+#import <Sparkle/Sparkle.h>
+
 #import "AppDelegate.h"
 
-#import "Config.h"
+#import "RHStatusItemView.h"
+#import "NSAttributedString+hyperlinkFromString.h"
+#import "KeenClient.h"
+
 #import "Focus.h"
 #import "InstallerManager.h"
 #import "ConnectionManager.h"
 #import "HelperTool.h"
 #import "FocusHTTProxy.h"
-#import "RHStatusItemView.h"
-#import "NSAttributedString+hyperlinkFromString.h"
-#import "KeenClient.h"
-#import <Sparkle/Sparkle.h>
+#import "Config.h"
 
 @interface AppDelegate ()
+
+// TODO: Break this up!
 @property (nonatomic, assign, readwrite) IBOutlet NSWindow *window;
 @property (strong, nonatomic) NSStatusItem *statusItem;
 @property (strong, nonatomic) FocusHTTProxy *httpProxy;
@@ -39,25 +43,332 @@
 
 @implementation AppDelegate
 
-@synthesize websiteLabel;
+# pragma mark - System
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note
 {
     #pragma unused(note)
-    [self startup];
+    [self initialize];
     assert(self.window != nil);
 }
 
-- (void)updater:(SUUpdater *)updater willInstallUpdate:(SUAppcastItem *)update
+- (void)applicationWillTerminate:(NSNotification *)notification
 {
-#pragma unused(updater)
-    NSString *updateHelper = [update.propertiesDictionary objectForKey:@"updateHelper"];
-    if ([updateHelper isEqualToString:@"true"]) {
-        NSLog(@"We're updating the helper. Remove it so we can re-install on relaunch");
-        [self uninstallHelper];
+    #pragma unused(notification)
+    [self shutdown];
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+    #pragma unused(sender)
+    return NO;
+}
+
+- (bool)windowShouldClose
+{
+    return NO;
+}
+
+# pragma mark - Setup methods
+
+- (void)initialize
+{
+    self.userDefaults = [NSUserDefaults standardUserDefaults];
+
+    long numRuns = [self increaseNumberOfRuns];
+    
+    [self setupInstallerManager];
+    
+    if (numRuns == 1) {
+        [self firstRun];
+    }
+    
+    [self setupFocus];
+    [self setupSettingsDialog];
+    [self setupMenuBarIcon];
+    [self setupURLScheme];
+    [self setupUpdater];
+    [self setupAnalytics];
+    
+    self.helperConnectionManager = [ConnectionManager setup];
+    self.httpProxy = [FocusHTTProxy setup];
+    
+    [self checkIfFocusOnStartup];
+    
+    [self trackEvent:@"load"];
+}
+
+- (void)setupUpdater
+{
+    SUUpdater *sparkle = [[SUUpdater alloc] init];
+    sparkle.delegate = self;
+    [sparkle checkForUpdatesInBackground];
+}
+
+// Setup the focus:// URL scheme to trigger events in Focus (currently focus/unfocus/uninstall). Check Focus help for more info
+- (void)setupURLScheme
+{
+    NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
+    [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+
+// Focus collects anonymous analytics on basic usage to improve the product
+- (void)setupAnalytics
+{
+    [KeenClient sharedClientWithProjectId:KEEN_PROJECT_ID andWriteKey:KEEN_WRITE_KEY andReadKey:KEEN_READ_KEY];
+    [KeenClient disableGeoLocation]; // without this the user gets a prompt
+}
+
+- (void)setupSettingsDialog
+{
+    // Setup checkbox state
+    self.menuToggleCheckbox.state = [self.userDefaults boolForKey:@"menuIconTogglesFocus"];
+    self.monochromeIconCheckbox.state = [self.userDefaults boolForKey:@"monochromeIcon"];
+    self.launchCheckbox.state = [self.installerManager willAutoLaunch];
+    
+    [self setupAboutVersion];
+    [self setupWebsiteLabel];
+    [self setupBlockedSitesData];
+    [self setupScriptHookFields];
+    [self.removeBlockedSite setEnabled:NO];
+}
+
+// Installer manager manages complexity with helper tool & other install/uninstall tasks
+- (void)setupInstallerManager
+{
+    self.installerManager = [InstallerManager setup];
+    if (![self.installerManager installed]) {
+        [self error:@"We're sorry, but Focus couldn't install it's helper correctly so we're exiting. Please try running Focus again to try re-installing."];
+        return [[NSApplication sharedApplication] terminate:nil];
     }
 }
 
+- (void)setupFocus
+{
+    // Grab saved blocked sites and load them into focus
+    NSArray *blockedHosts = [self.userDefaults arrayForKey:@"blockedSites"];
+    self.focus = [[Focus alloc] initWithHosts:blockedHosts];
+}
+
+- (void)setupAboutVersion
+{
+    [self.versionLabel setStringValue:[NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
+}
+
+- (void)setupScriptHookFields
+{
+    [self.onUnfocusScript setObjectValue:[self.userDefaults objectForKey:@"onUnfocusScript"]];
+    [self.onFocusScript setObjectValue:[self.userDefaults objectForKey:@"onFocusScript"]];
+}
+
+- (void)setupBlockedSitesData
+{
+    for (NSString *host in self.focus.hosts) {
+        [self.blockedSitesArrayController addObject:[[NSMutableDictionary alloc] initWithDictionary:@{@"name": host}]];
+    }
+    
+    [self.blockedSitesTableView reloadData];
+}
+
+- (void)setupWebsiteLabel
+{
+    NSURL* url = [NSURL URLWithString:@"http://heyfocus.com/?utm_source=focus_about"];
+    
+    NSMutableAttributedString* string = [[NSMutableAttributedString alloc] init];
+    [string appendAttributedString:[NSAttributedString hyperlinkFromString:@"http://heyfocus.com" withURL:url]];
+    
+    [self.websiteLabel setAttributedStringValue:string];
+    [self.websiteLabel setAllowsEditingTextAttributes:YES];
+    [self.websiteLabel setSelectable:YES];
+    [self.websiteLabel setAlignment:NSCenterTextAlignment];
+}
+
+- (void)setupMenuBarIcon {
+    
+    if (self.statusItem != nil) return;
+    
+    self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:24];
+    
+    self.statusItem.highlightMode = NO;
+    
+    self.statusItemView = [[RHStatusItemView alloc] initWithStatusBarItem:self.statusItem];
+    [self.statusItem setView:self.statusItemView];
+    [self.statusItemView setRightMenu:self.contextMenu];
+    [self.statusItemView setRightAction:@selector(rightClickMenu)];
+    [self setStatusItemViewIconOff];
+    
+    if (self.menuToggleCheckbox.state) {
+        [self.statusItemView setAction:@selector(toggleFocus)];
+    } else {
+        [self.statusItemView setAction:@selector(rightClickMenu)];
+    }
+}
+
+// Keep track of the number of times Focus runs. Mostly useful for tracking first run for 1-time setup
+- (long)increaseNumberOfRuns
+{
+    long numRuns = [self.userDefaults integerForKey:@"numRuns"];
+    [self.userDefaults setInteger:++numRuns forKey:@"numRuns"];
+    [self.userDefaults synchronize];
+    LogMessageCompat(@"Number of runs = %ld", numRuns);
+    return numRuns;
+}
+
+- (long)increaseNumberOfFocuses
+{
+    long numFocuses = [self.userDefaults integerForKey:@"numFocuses"];
+    [self.userDefaults setInteger:++numFocuses forKey:@"numFocuses"];
+    [self.userDefaults synchronize];
+    LogMessageCompat(@"Number of focuses = %ld", numFocuses);
+    return numFocuses;
+}
+
+- (void)checkIfFocusOnStartup
+{
+    // This shouldn't ever really happen unless Focus crashes
+    if ([self.focus isFocusing]) {
+        LogMessageCompat(@"Focus was active when it started. Deactivating");
+        [self goUnfocus];
+    }
+}
+
+- (void)firstRun
+{
+    LogMessageCompat(@"Performing first time run setup");
+    [self.userDefaults setObject:[Focus getDefaultHosts] forKey:@"blockedSites"];
+    [self.userDefaults synchronize];
+}
+
+# pragma mark - Focus
+
+- (void)goFocus
+{
+    LogMessageCompat(@"goFocusing");
+    
+    [self trackEvent:@"focus"];
+    
+    [self increaseNumberOfFocuses];
+    
+    [self setStatusItemViewIconOn];
+    
+    if (![FocusHTTProxy isRunning]) {
+        LogMessageCompat(@"HTTP Proxy IS NOT RUNNING...starting it!");
+        [self.httpProxy start];
+    }
+    
+    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
+        if (connectError != nil) {
+            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
+            [self setStatusItemViewIconOff];
+            return;
+        }
+        
+        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
+            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
+        }] focus:self.installerManager.authorization blockedHosts:self.focus.hosts withReply:^(NSError *commandError) {
+            if (commandError != nil) {
+                [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
+            } else {
+                NSString *script = [self.userDefaults objectForKey:@"onFocusScript"];
+                if (script) {
+                    [self runScript:script];
+                }
+            }
+        }];
+    }];
+}
+
+- (void)goUnfocus
+{
+    LogMessageCompat(@"goUnfocusing");
+    
+    // This seems like the least bad place to interrupt a user for a productivity app about focusing :)
+    long numFocuses = [self.userDefaults integerForKey:@"numFocuses"];
+    if (numFocuses == 3) {
+        [self promptForAutoStart];
+    }
+    
+    [self trackEvent:@"unfocus"];
+    
+    [self setStatusItemViewIconOff];
+    
+    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
+        if (connectError != nil) {
+            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
+            [self setStatusItemViewIconOn];
+            return;
+        }
+        
+        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
+            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
+        }] unfocus:self.installerManager.authorization withReply:^(NSError *commandError) {
+            if (commandError != nil) {
+                [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
+            } else {
+                NSString *script = [self.userDefaults objectForKey:@"onUnfocusScript"];
+                if (script) {
+                    [self runScript:script];
+                }
+            }
+        }];
+    }];
+}
+
+
+- (void)toggleFocus
+{
+    if ([self.statusItemView.toolTip isEqualToString:@"Focus"]) {
+        [self goFocus];
+    } else if ([self.statusItemView.toolTip isEqualToString:@"Unfocus"]) {
+        [self goUnfocus];
+    } else {
+        [self error:@"Unknown Focus state"];
+    }
+}
+
+- (void)shutdown
+{
+    LogMessageCompat(@"Shutting down");
+    
+    if ([self.focus isFocusing]) {
+        [self goUnfocus];
+    }
+    
+    [self.httpProxy stop];
+}
+
+
+
+- (void)uninstall
+{
+    [self goUnfocus];
+    
+    [self trackEvent:@"uninstall"];
+    
+    [self resetUserDefaults];
+    
+    // Uninstall auto launch
+    [self.installerManager uninstallAutoLaunch];
+    
+    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
+        if (connectError != nil) {
+            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
+            self.statusItem.title = @"Unfocus";
+            [self setStatusItemViewIconOn];
+            return;
+        }
+        
+        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
+            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
+        }] uninstall:self.installerManager.authorization withReply:^(NSError *commandError) {
+#pragma unused(commandError)
+            [[NSApplication sharedApplication] terminate:nil];
+        }];
+    }];
+}
+
+// Uninstall just the helper—useful for reinstalling the helper when it starts back up
+// Otherwise you probably want [self uninstall]
 - (void)uninstallHelper
 {
     [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
@@ -77,131 +388,19 @@
             }
         }];
     }];
-
 }
 
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-    #pragma unused(notification)
-    [self shutdown];
-}
+#pragma mark - UI methods
 
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+- (void)promptForAutoStart
 {
-    #pragma unused(sender)
-    return NO;
-}
-
-- (void)startup
-{
-    self.userDefaults = [NSUserDefaults standardUserDefaults];
-    
-    long numRuns = [self.userDefaults integerForKey:@"numRuns"];
-    [self.userDefaults setInteger:++numRuns forKey:@"numRuns"];
-    [self.userDefaults synchronize];
-    
-    LogMessageCompat(@"Number of runs = %ld", numRuns);
-    
-    self.installerManager = [[InstallerManager alloc] init];
-    [self.installerManager run];
-
-    if (numRuns == 1) {
-        [self firstRun];
-    }
-    
-    // If we're not installed—just quit
-    if (!self.installerManager.installed) {
-        [self error:@"We're sorry, but Focus couldn't install it's helper correctly so we're exiting. Please try running Focus again to try re-installing."];
-        [[NSApplication sharedApplication] terminate:nil];
+    if ([self.installerManager willAutoLaunch]) {
+        NSLog(@"Focus will already auto-launch, skipping...");
         return;
     }
     
-    // Setup connection
-    ConnectionManager *connection = [[ConnectionManager alloc] init];
-    [connection connectToHelperTool];
-    
-    // Connect to helper
-    self.helperConnectionManager = [[ConnectionManager alloc] init];
-    [self.helperConnectionManager connectToHelperTool];
-    
-    // Init Focus manager
-    self.focus = [[Focus alloc] initWithHosts:[self.userDefaults arrayForKey:@"blockedSites"]];
-    
-    // Setup http proxy daemon
-    [FocusHTTProxy killZombiedProxies];
-    self.httpProxy = [[FocusHTTProxy alloc] init];
-    [self.httpProxy start];
-    
-    // Setup launch agent toggle checkbox
-    self.launchCheckbox.state = [self.installerManager willAutoLaunch];
-    
-    LogMessageCompat(@"willAutoLaunch = %d", self.installerManager.willAutoLaunch);
-    
-    // Setup menu icon toggle checkbox
-    self.menuToggleCheckbox.state = [self.userDefaults boolForKey:@"menuIconTogglesFocus"];
-    
-    // Setup monochrome toggle checkbox
-    self.monochromeIconCheckbox.state = [self.userDefaults boolForKey:@"monochromeIcon"];
-
-    // Setup advanced script hooks]
-    [self setupScriptHooks];
-
-    // Set active version on about screen
-    [self setupAboutVersion];
-    
-    // Setup website link in about
-    [self setupWebsiteLabel];
-    
-    [self loadBlockedSitesData];
-    [self.removeBlockedSite setEnabled:NO];
-    
-    // Setup menubar
-    [self createMenuBarItem];
-    
-    // This shouldn't ever really happen unless Focus crashes
-    if ([self.focus isFocusing]) {
-        LogMessageCompat(@"Focus was active when it started. Deactivating");
-        [self goUnfocus];
-    }
-
-    // Register URL scheme
-    NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
-    [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
-    
-    // Setup Sparkle
-    SUUpdater *sparkle = [[SUUpdater alloc] init];
-    sparkle.delegate = self;
-    [sparkle checkForUpdatesInBackground];
-    
-    // Setup Keen
-    [KeenClient sharedClientWithProjectId:KEEN_PROJECT_ID andWriteKey:KEEN_WRITE_KEY andReadKey:KEEN_READ_KEY];
-    [KeenClient disableGeoLocation];
-    
-    [self trackEvent:@"load"];
-    
-}
-
-- (void)setupAboutVersion
-{
-    [self.versionLabel setStringValue:[NSString stringWithFormat:@"v%@", [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]]];
-}
-
-- (void)setupScriptHooks
-{
-    [self.onUnfocusScript setObjectValue:[self.userDefaults objectForKey:@"onUnfocusScript"]];
-    [self.onFocusScript setObjectValue:[self.userDefaults objectForKey:@"onFocusScript"]];
-
-}
-
-- (void)firstRun
-{
-    LogMessageCompat(@"Performing first time run setup");
-    [self.userDefaults setObject:[Focus getDefaultHosts] forKey:@"blockedSites"];
-    [self.userDefaults synchronize];
-    
-    
     NSAlert *alertBox = [[NSAlert alloc] init];
-    [alertBox setMessageText:@"Start Focus on startup?"];
+    [alertBox setMessageText:@"Start Focus automatically?"];
     [alertBox setInformativeText:@"Do you want to start Focus automatically when your computer boots? (you can always change this later)"];
     [alertBox addButtonWithTitle:@"OK"];
     [alertBox addButtonWithTitle:@"Cancel"];
@@ -213,16 +412,7 @@
         [self.installerManager installAutoLaunch];
         self.launchCheckbox.state = [self.installerManager willAutoLaunch];
     }
-    
-}
 
-- (void)loadBlockedSitesData
-{
-    for (NSString *host in self.focus.hosts) {
-        [self.blockedSitesArrayController addObject:[[NSMutableDictionary alloc] initWithDictionary:@{@"name": host}]];
-    }
-    
-    [self.blockedSitesTableView reloadData];
 }
 
 - (void)saveBlockedSitesData
@@ -259,51 +449,6 @@
     [self.blockedSitesArrayController removeObjectsAtArrangedObjectIndexes:[NSIndexSet indexSetWithIndexesInRange:range]];
 }
 
-- (void)setupWebsiteLabel
-{
-    NSURL* url = [NSURL URLWithString:@"http://heyfocus.com/?utm_source=focus_about"];
-    
-    NSMutableAttributedString* string = [[NSMutableAttributedString alloc] init];
-    [string appendAttributedString:[NSAttributedString hyperlinkFromString:@"http://heyfocus.com" withURL:url]];
-    
-    [self.websiteLabel setAttributedStringValue:string];
-    [self.websiteLabel setAllowsEditingTextAttributes:YES];
-    [self.websiteLabel setSelectable:YES];
-    [self.websiteLabel setAlignment:NSCenterTextAlignment];
-}
-
-- (void)shutdown
-{
-    LogMessageCompat(@"Shutting down");
-    
-    if ([self.focus isFocusing]) {
-        [self goUnfocus];
-    }
-    
-    [self.httpProxy stop];
-}
-
-- (void)createMenuBarItem {
-    
-    if (self.statusItem != nil) return;
-    
-    self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:24];
-
-    self.statusItem.highlightMode = NO;
-    
-    self.statusItemView = [[RHStatusItemView alloc] initWithStatusBarItem:self.statusItem];
-    [self.statusItem setView:self.statusItemView];
-    [self.statusItemView setRightMenu:self.contextMenu];
-    [self.statusItemView setRightAction:@selector(rightClickMenu)];
-    [self setStatusItemViewIconOff];
-    
-    if (self.menuToggleCheckbox.state) {
-        [self.statusItemView setAction:@selector(toggleFocus)];
-    } else {
-        [self.statusItemView setAction:@selector(rightClickMenu)];
-    }
-}
-
 - (void)setStatusItemViewIconOff
 {
     [self.statusItemView setImage:[NSImage imageNamed:@"menu-icon-off"]];
@@ -330,131 +475,6 @@
 - (void)rightClickMenu
 {
     [self.statusItemView popUpRightMenu];
-}
-
-- (void)toggleFocus
-{
-    if ([self.statusItemView.toolTip isEqualToString:@"Focus"]) {
-        [self goFocus];
-    } else if ([self.statusItemView.toolTip isEqualToString:@"Unfocus"]) {
-        [self goUnfocus];
-    } else {
-        [self error:@"Unknown Focus state"];
-    }
-}
-
-- (bool)windowShouldClose
-{
-    return NO;
-}
-
-- (void)goFocus
-{
-    LogMessageCompat(@"goFocusing");
-    
-    [self trackEvent:@"focus"];
-
-    [self setStatusItemViewIconOn];
-    
-    if (![FocusHTTProxy isRunning]) {
-        LogMessageCompat(@"HTTP Proxy IS NOT RUNNING...starting it!");
-        [self.httpProxy start];
-    }
-
-    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
-        if (connectError != nil) {
-            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
-            [self setStatusItemViewIconOff];
-            return;
-        }
-        
-        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
-            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
-        }] focus:self.installerManager.authorization blockedHosts:self.focus.hosts withReply:^(NSError *commandError) {
-            if (commandError != nil) {
-                [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
-            } else {
-                NSString *script = [self.userDefaults objectForKey:@"onFocusScript"];
-                if (script) {
-                    [self runScript:script];
-                }
-            }
-        }];
-    }];
-}
-
-- (void)goUnfocus
-{
-    LogMessageCompat(@"goUnfocusing");
-    
-    [self trackEvent:@"unfocus"];
-    
-    [self setStatusItemViewIconOff];
- 
-    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
-        if (connectError != nil) {
-            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
-            [self setStatusItemViewIconOn];
-            return;
-        }
-        
-        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
-            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
-        }] unfocus:self.installerManager.authorization withReply:^(NSError *commandError) {
-            if (commandError != nil) {
-                [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
-            } else {
-                NSString *script = [self.userDefaults objectForKey:@"onUnfocusScript"];
-                if (script) {
-                    [self runScript:script];
-                }
-            }
-        }];
-    }];
-}
-
-- (void)error:(NSString *)msg
-{
-    LogMessageCompat(@"ERROR = %@", msg);
-    
-    // TODO: Add more detailed error tracking here without leaking any private data...
-    [self trackEvent:@"error"];
-
-    NSAlert *alertBox = [[NSAlert alloc] init];
-    [alertBox setMessageText:@"An Error Occurred"];
-    [alertBox setInformativeText:msg];
-    [alertBox addButtonWithTitle:@"OK"];
-    [alertBox runModal];
-}
-
-- (void)uninstall
-{
-    [self goUnfocus];
-    
-    [self trackEvent:@"uninstall"];
-    
-    // Reset NSUserDefaults — has to be done here rather than on helper
-    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
-    [self.userDefaults removePersistentDomainForName:domainName];
-    
-    // Uninstall auto launch
-    [self.installerManager uninstallAutoLaunch];
-    
-    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
-        if (connectError != nil) {
-            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
-            self.statusItem.title = @"Unfocus";
-            [self setStatusItemViewIconOn];
-            return;
-        }
-        
-        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
-            [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
-        }] uninstall:self.installerManager.authorization withReply:^(NSError *commandError) {
-#pragma unused(commandError)
-            [[NSApplication sharedApplication] terminate:nil];
-        }];
-    }];
 }
 
 -(void)turnOnMenuIconTogglesFocus
@@ -605,21 +625,9 @@
         
         self.focus.hosts = [Focus getDefaultHosts];
         [self resetBlockedSitesData];
-        [self loadBlockedSitesData];
+        [self setupBlockedSitesData];
         [self saveBlockedSitesData];
     }
-}
-
-- (NSString *)getExecutableFromFileDialog {
-
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    NSInteger result = [panel runModal];
-
-    if (result == NSOKButton) {
-        return [[panel URL] path];
-    }
-
-    return nil;
 }
 
 - (IBAction)onFocusScriptButtonClicked:(NSButton *)sender {
@@ -700,6 +708,20 @@
     }
 }
 
+# pragma mark - Sparkle Delegates
+
+- (void)updater:(SUUpdater *)updater willInstallUpdate:(SUAppcastItem *)update
+{
+#pragma unused(updater)
+    // When updating, if the property "updateHelper" is true, uninstall the helper before we restart
+    // so that it will be re-installed next time
+    NSString *updateHelper = [update.propertiesDictionary objectForKey:@"updateHelper"];
+    if ([updateHelper isEqualToString:@"true"]) {
+        NSLog(@"We're updating the helper. Remove it so we can re-install on relaunch");
+        [self uninstallHelper];
+    }
+}
+
 # pragma mark - URL Scheme
 
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
@@ -710,6 +732,7 @@
     NSURL *url = [NSURL URLWithString:urlStr];
     NSString *action = [[url host] lowercaseString];
 
+    // hooks for focus://<action>
     if ([action isEqualToString:@"focus"]) {
         [self goFocus];
     } else if ([action isEqualToString:@"unfocus"]) {
@@ -719,6 +742,52 @@
     }
 }
 
+# pragma mark - Utils
+
+// TODO Most of these should be split out as separate libs
+
+- (void)trackEvent:(NSString *)eventName
+{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:eventName, @"event", nil];
+        [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_COLLECTION error:nil];
+        [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
+    });
+}
+
+- (void)error:(NSString *)msg
+{
+    LogMessageCompat(@"ERROR = %@", msg);
+    
+    // TODO: Add more detailed error tracking here without leaking any private data...
+    [self trackEvent:@"error"];
+    
+    NSAlert *alertBox = [[NSAlert alloc] init];
+    [alertBox setMessageText:@"An Error Occurred"];
+    [alertBox setInformativeText:msg];
+    [alertBox addButtonWithTitle:@"OK"];
+    [alertBox runModal];
+}
+
+- (void)resetUserDefaults
+{
+    NSString *domainName = [[NSBundle mainBundle] bundleIdentifier];
+    [self.userDefaults removePersistentDomainForName:domainName];
+}
+
+- (NSString *)getExecutableFromFileDialog {
+    
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    NSInteger result = [panel runModal];
+    
+    if (result == NSOKButton) {
+        return [[panel URL] path];
+    }
+    
+    return nil;
+}
+
+// TODO Is there any way to make this safer?
 -(void)runScript:(NSString*)scriptName
 {
     NSString *contents = [[NSString stringWithContentsOfFile:scriptName encoding:NSUTF8StringEncoding error:NULL] lowercaseString];
@@ -727,9 +796,9 @@
         [self error:@"Focus & Unfocus scripts cannot contain the string 'focus://'. You're not allowed to change Focus state from these scripts, otherwise it might result in an infinite loop."];
         return;
     }
-
+    
     NSLog(@"Running script = %@", scriptName);
-
+    
     NSTask *task;
     task = [[NSTask alloc] init];
     [task setLaunchPath:@"/bin/sh"];
@@ -753,13 +822,6 @@
     string = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     
     NSLog (@"script returned:\n%@", string);
-}
-
-- (void)trackEvent:(NSString *)eventName
-{
-    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:eventName, @"event", nil];
-    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_COLLECTION error:nil];
-    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
 @end

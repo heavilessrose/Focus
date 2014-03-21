@@ -13,6 +13,7 @@
 @property (atomic, copy,   readwrite) NSData * authorization;
 @property (nonatomic, assign) BOOL installed;
 
++ (InstallerManager *)setup;
 - (void)run;
 - (void)uninstall;
 

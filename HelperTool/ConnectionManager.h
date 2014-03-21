@@ -12,6 +12,7 @@
 
 @property (atomic, strong, readwrite) NSXPCConnection *helperToolConnection;
 
++ (ConnectionManager *)setup;
 - (void)connectAndExecuteCommandBlock:(void(^)(NSError *))commandBlock;
 - (void)connectToHelperTool;
 

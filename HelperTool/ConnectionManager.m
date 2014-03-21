@@ -14,6 +14,13 @@
 
 @synthesize helperToolConnection;
 
++ (ConnectionManager *)setup
+{
+    ConnectionManager *connection = [[ConnectionManager alloc] init];
+    [connection connectToHelperTool];
+    return connection;
+}
+
 - (void)connectToHelperTool
 {
     assert([NSThread isMainThread]);
