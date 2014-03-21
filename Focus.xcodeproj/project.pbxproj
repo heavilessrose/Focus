@@ -28,6 +28,9 @@
 		A2221A7E1861538C009AE3E9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C372F715E7D4D4007554D3 /* ServiceManagement.framework */; };
 		A2221A7F186153AA009AE3E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4ED7B8315E79B83002AD912 /* Cocoa.framework */; };
 		A22224211847CAF8008FD525 /* LaunchAtLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = A222241F1847CAF8008FD525 /* LaunchAtLoginController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w"; }; };
+		A2263C2618DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
+		A2263C2718DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
+		A2263C2818DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
 		A2307CE9184D5BCF00C2F291 /* focus in Resources */ = {isa = PBXBuildFile; fileRef = A2307CE8184D5BCF00C2F291 /* focus */; };
 		A241E19C187517DB00A86DD1 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A241E1981875165C00A86DD1 /* Sparkle.framework */; };
 		A241E19E1875204A00A86DD1 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A241E1981875165C00A86DD1 /* Sparkle.framework */; };
@@ -60,6 +63,7 @@
 		A2D57B141842B81A008744DC /* NSTask+runCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D57B131842B81A008744DC /* NSTask+runCommand.m */; };
 		A2D57B151842B81A008744DC /* NSTask+runCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D57B131842B81A008744DC /* NSTask+runCommand.m */; };
 		A2D57B221842C05B008744DC /* InstallerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D57B211842C05B008744DC /* InstallerManager.m */; };
+		A2E150A018DBE54D0061903C /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2918DBDE33009525AA /* CoreLocation.framework */; };
 		A2F6A4B5184EEE2700B07FC6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A2F6A4AF184EEE2700B07FC6 /* InfoPlist.strings */; };
 		A2F6A4B6184EEE2700B07FC6 /* RHStatusItemView-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A2F6A4B1184EEE2700B07FC6 /* RHStatusItemView-Info.plist */; };
 		A2F6A4B7184EEE2700B07FC6 /* RHStatusItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = A2F6A4B4184EEE2700B07FC6 /* RHStatusItemView.m */; };
@@ -162,6 +166,11 @@
 		A21B6165184140BE0085C4B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		A222241E1847CAF8008FD525 /* LaunchAtLoginController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchAtLoginController.h; sourceTree = "<group>"; };
 		A222241F1847CAF8008FD525 /* LaunchAtLoginController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LaunchAtLoginController.m; sourceTree = "<group>"; };
+		A2263C2318DBDE11009525AA /* KeenClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeenClient.h; sourceTree = "<group>"; };
+		A2263C2418DBDE11009525AA /* KeenProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeenProperties.h; sourceTree = "<group>"; };
+		A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libKeenClient-Aggregate.a"; sourceTree = "<group>"; };
+		A2263C2918DBDE33009525AA /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		A2263C2B18DBDF19009525AA /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		A2307CE8184D5BCF00C2F291 /* focus */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = focus; path = Resources/focus; sourceTree = "<group>"; };
 		A241E1981875165C00A86DD1 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = Frameworks/Sparkle.framework; sourceTree = "<group>"; };
 		A242FB9018640E01008DEB21 /* NSAttributedString+hyperlinkFromString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+hyperlinkFromString.h"; sourceTree = "<group>"; };
@@ -245,6 +254,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A21B616A1841415C0085C4B7 /* SystemConfiguration.framework in Frameworks */,
+				A2263C2718DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */,
 				A21B6169184141510085C4B7 /* CFNetwork.framework in Frameworks */,
 				E4C32DCC16023A97002AFAB3 /* Foundation.framework in Frameworks */,
 				E4C32DE516024494002AFAB3 /* ServiceManagement.framework in Frameworks */,
@@ -261,6 +271,7 @@
 				A21B61681841414A0085C4B7 /* CFNetwork.framework in Frameworks */,
 				A21B6167184141460085C4B7 /* SystemConfiguration.framework in Frameworks */,
 				E4C372FC15E7D4FE007554D3 /* Foundation.framework in Frameworks */,
+				A2263C2818DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */,
 				E4CBCCE315EBA7000081DF5C /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,11 +280,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2E150A018DBE54D0061903C /* CoreLocation.framework in Frameworks */,
 				A21B6166184140BE0085C4B7 /* SystemConfiguration.framework in Frameworks */,
 				A21B6164184140B70085C4B7 /* CFNetwork.framework in Frameworks */,
 				A241E19E1875204A00A86DD1 /* Sparkle.framework in Frameworks */,
 				E4ED7B8415E79B83002AD912 /* Cocoa.framework in Frameworks */,
 				E4C372F815E7D4D4007554D3 /* ServiceManagement.framework in Frameworks */,
+				A2263C2618DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */,
 				E4C372FA15E7D4D8007554D3 /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,6 +331,16 @@
 				A222241F1847CAF8008FD525 /* LaunchAtLoginController.m */,
 			);
 			path = LaunchAtLoginController;
+			sourceTree = "<group>";
+		};
+		A2263C2218DBDE11009525AA /* Keen */ = {
+			isa = PBXGroup;
+			children = (
+				A2263C2318DBDE11009525AA /* KeenClient.h */,
+				A2263C2418DBDE11009525AA /* KeenProperties.h */,
+				A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */,
+			);
+			path = Keen;
 			sourceTree = "<group>";
 		};
 		A242FB8C18640D77008DEB21 /* NSAttributedString+hyperlinkFromString */ = {
@@ -392,6 +415,7 @@
 		A2D57B061842AF75008744DC /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				A2263C2218DBDE11009525AA /* Keen */,
 				A242FB8C18640D77008DEB21 /* NSAttributedString+hyperlinkFromString */,
 				A2F6A4AE184EEE2700B07FC6 /* RHStatusItemView */,
 				A222241D1847CAF8008FD525 /* LaunchAtLoginController */,
@@ -512,6 +536,7 @@
 		E4ED7B8215E79B83002AD912 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A2263C2918DBDE33009525AA /* CoreLocation.framework */,
 				A241E1981875165C00A86DD1 /* Sparkle.framework */,
 				A20CF69218445AB3000CBDA0 /* XCTest.framework */,
 				A21B6165184140BE0085C4B7 /* SystemConfiguration.framework */,
@@ -535,6 +560,7 @@
 				E4CBCCE815EBB50D0081DF5C /* Common */,
 				E4ED7B8915E79B83002AD912 /* AppDelegate.h */,
 				E4ED7B8A15E79B83002AD912 /* AppDelegate.m */,
+				A2263C2B18DBDF19009525AA /* Config.h */,
 				A265E80818445C420098D0AB /* Support Files */,
 			);
 			path = App;
@@ -924,6 +950,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				INFOPLIST_FILE = "App-Sandboxed/XPCService/XPCService-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = BradJasper.focus.XPCService;
 				WRAPPER_EXTENSION = xpc;
@@ -938,6 +968,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				INFOPLIST_FILE = "App-Sandboxed/XPCService/XPCService-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				MACH_O_TYPE = mh_execute;
 				PRODUCT_NAME = BradJasper.focus.XPCService;
 				WRAPPER_EXTENSION = xpc;
@@ -952,6 +986,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				INFOPLIST_FILE = "HelperTool/HelperTool-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -975,6 +1013,10 @@
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 				);
 				INFOPLIST_FILE = "HelperTool/HelperTool-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -1095,6 +1137,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = App/FocusPrefixHeader.pch;
 				INFOPLIST_FILE = "App/App-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				PRODUCT_NAME = Focus;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1112,6 +1158,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = App/FocusPrefixHeader.pch;
 				INFOPLIST_FILE = "App/App-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Libraries/Keen",
+				);
 				PRODUCT_NAME = Focus;
 				WRAPPER_EXTENSION = app;
 			};

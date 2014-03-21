@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+#import "Config.h"
 #import "Focus.h"
 #import "InstallerManager.h"
 #import "ConnectionManager.h"
@@ -7,6 +8,7 @@
 #import "FocusHTTProxy.h"
 #import "RHStatusItemView.h"
 #import "NSAttributedString+hyperlinkFromString.h"
+#import "KeenClient.h"
 #import <Sparkle/Sparkle.h>
 
 @interface AppDelegate ()
@@ -44,10 +46,6 @@
     #pragma unused(note)
     [self startup];
     assert(self.window != nil);
-    
-    SUUpdater *sparkle = [[SUUpdater alloc] init];
-    sparkle.delegate = self;
-    [sparkle checkForUpdatesInBackground];
 }
 
 - (void)updater:(SUUpdater *)updater willInstallUpdate:(SUAppcastItem *)update
@@ -169,6 +167,20 @@
     // Register URL scheme
     NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
     [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
+    
+    // Setup Sparkle
+    SUUpdater *sparkle = [[SUUpdater alloc] init];
+    sparkle.delegate = self;
+    [sparkle checkForUpdatesInBackground];
+    
+    // Setup Keen
+    [KeenClient sharedClientWithProjectId:KEEN_PROJECT_ID andWriteKey:KEEN_WRITE_KEY andReadKey:KEEN_READ_KEY];
+    [KeenClient disableGeoLocation];
+    
+    // Set onload event
+    NSDictionary *event = [NSDictionary dictionaryWithObjectsAndKeys:@"load", @"event", nil];
+    [[KeenClient sharedClient] addEvent:event toEventCollection:KEEN_COLLECTION error:nil];
+    [[KeenClient sharedClient] uploadWithFinishedBlock:nil];
 }
 
 - (void)setupAboutVersion
