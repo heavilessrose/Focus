@@ -10,9 +10,11 @@
 	<string>HelperTool</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.9.5</string>
 	<key>SMAuthorizedClients</key>
 	<array>
-		<string>anchor apple generic and identifier "BradJasper.focus" and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = J6KYVU254V)</string>
+		<string>anchor apple generic and identifier &quot;BradJasper.focus&quot; and (certificate leaf[field.1.2.840.113635.100.6.1.9] /* exists */ or certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = J6KYVU254V)</string>
 	</array>
 </dict>
 </plist>

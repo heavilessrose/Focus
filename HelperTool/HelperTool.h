@@ -17,6 +17,7 @@
 - (void)focus:(NSData *)authData blockedHosts:(NSArray *)hosts withReply:(void(^)(NSError * error))reply;
 - (void)unfocus:(NSData *)authData withReply:(void(^)(NSError * error))reply;
 - (void)uninstall:(NSData *)authData withReply:(void(^)(NSError * error))reply;
+- (void)version:(NSData *)authData withReply:(void(^)(NSError * error, NSString *version))reply;
 
 @end
 

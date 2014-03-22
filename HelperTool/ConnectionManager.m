@@ -23,7 +23,7 @@
 
 - (void)connectToHelperTool
 {
-    assert([NSThread isMainThread]);
+//    assert([NSThread isMainThread]);
     if (self.helperToolConnection == nil) {
         self.helperToolConnection = [[NSXPCConnection alloc] initWithMachServiceName:kHelperToolMachServiceName options:NSXPCConnectionPrivileged];
         self.helperToolConnection.remoteObjectInterface = [NSXPCInterface interfaceWithProtocol:@protocol(HelperToolProtocol)];
@@ -43,7 +43,7 @@
 
 - (void)connectAndExecuteCommandBlock:(void(^)(NSError *))commandBlock
 {
-    assert([NSThread isMainThread]);
+//    assert([NSThread isMainThread]);
     [self connectToHelperTool];
     commandBlock(nil);
 }

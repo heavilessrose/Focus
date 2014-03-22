@@ -21,6 +21,7 @@
 - (bool)uninstallAutoLaunch;
 - (bool)uninstallHelperTool;
 - (bool)installAutoLaunch;
+- (bool)installHelper;
 
 - (bool)PACDirExists;
 - (bool)installPACDirectory;

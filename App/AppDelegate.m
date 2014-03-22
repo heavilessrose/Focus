@@ -73,12 +73,15 @@
 
 - (void)initialize
 {
+    [self setupAnalytics];
+    
     self.userDefaults = [NSUserDefaults standardUserDefaults];
 
     long numRuns = [self increaseNumberOfRuns];
     
     [self setupInstallerManager];
     
+    // Setup installer manager before first run so we can perform necessary admin actions
     if (numRuns == 1) {
         [self firstRun];
     }
@@ -88,12 +91,12 @@
     [self setupMenuBarIcon];
     [self setupURLScheme];
     [self setupUpdater];
-    [self setupAnalytics];
     
     self.helperConnectionManager = [ConnectionManager setup];
     self.httpProxy = [FocusHTTProxy setup];
     
     [self checkIfFocusOnStartup];
+    [self checkIfHelperToolVersionMatches];
     
     [self trackEvent:@"load"];
 }
@@ -228,8 +231,60 @@
     // This shouldn't ever really happen unless Focus crashes
     if ([self.focus isFocusing]) {
         LogMessageCompat(@"Focus was active when it started. Deactivating");
+        [self trackEvent:@"activeOnStart"];
         [self goUnfocus];
     }
+}
+
+- (void)checkIfHelperToolVersionMatches
+{
+    [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
+        if (connectError != nil) {
+            [self error:[NSString stringWithFormat:@"Unable to connect to helper: %@", connectError]];
+            return;
+        }
+        
+        [[self.helperConnectionManager.helperToolConnection remoteObjectProxyWithErrorHandler:^(NSError *proxyError) {
+#pragma unused(proxyError)
+            NSLog(@"Helper tool doesn't have version check");
+            [self fixBadHelperTool];
+            
+        }] version:self.installerManager.authorization withReply:^(NSError *commandError, NSString *version) {
+            if (commandError != nil) {
+                [self error:[NSString stringWithFormat:@"Error response from helper: %@", commandError]];
+            } else {
+                
+                NSString *currentVersion = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+                
+                if (!version || [version isNotEqualTo:currentVersion]) {
+                    NSLog(@"Helper tool has wrong version (ver=%@/curr=%@)", version, currentVersion);
+                    [self fixBadHelperTool];
+                } else {
+                    NSLog(@"Helper tool version matches current app version...good to go");
+                }
+            }
+        }];
+    }];
+}
+
+- (void)fixBadHelperTool
+{
+    [self trackEvent:@"badHelper"];
+    // Helper tool version checker isn't installed....
+    [self error:@"Focus detected it's helper tool is out date and will attempt to upgrade it."];
+    // Uninstall current version
+    [self uninstallHelper:^void (NSError *error) {
+        if (error) {
+            [self trackEvent:@"badHelperBadUpgrade"];
+            [self error:@"There was a problem while trying to upgrade Focus' helper tool. We're sorry about this. Please restart and if the problem persists, reinstall (check the help menu)"];
+            NSLog(@"Error uninstalling helper = %@", error);
+        } else {
+            // Install new version
+            [self.installerManager installHelper];
+            // Setup new connection
+            self.helperConnectionManager = [ConnectionManager setup];
+        }
+    }];
 }
 
 - (void)firstRun
@@ -362,7 +417,7 @@
             [self error:[NSString stringWithFormat:@"Proxy error: %@", proxyError]];
         }] uninstall:self.installerManager.authorization withReply:^(NSError *commandError) {
 #pragma unused(commandError)
-            [[NSApplication sharedApplication] terminate:nil];
+            [self shutdownApp];
         }];
     }];
 }
@@ -370,6 +425,11 @@
 // Uninstall just the helper—useful for reinstalling the helper when it starts back up
 // Otherwise you probably want [self uninstall]
 - (void)uninstallHelper
+{
+    [self uninstallHelper:nil];
+}
+
+- (void)uninstallHelper:(void (^)(NSError *error))callback
 {
     [self.helperConnectionManager connectAndExecuteCommandBlock:^(NSError *connectError) {
         if (connectError != nil) {
@@ -383,6 +443,9 @@
 #pragma unused(commandError)
             if (commandError == nil) {
                 NSLog(@"Helper tool successfully uninstalled");
+                if (callback) {
+                    callback(nil);
+                }
             } else {
                 [self error:@"There was a problem while trying to upgrade Focus. Please try again. If that doesn't work, you can re-open the app and click Uninstall in the menu (this will remove your settings). Then run the latest version. Sorry for any inconvenience."];
             }
@@ -727,6 +790,8 @@
 - (void)getUrl:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent
 {
 #pragma unused(replyEvent)
+    
+    [self trackEvent:@"urlSchemeTriggered"];
 
     NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
     NSURL *url = [NSURL URLWithString:urlStr];
@@ -823,5 +888,11 @@
     
     NSLog (@"script returned:\n%@", string);
 }
+
+- (void)shutdownApp
+{
+    [[NSApplication sharedApplication] terminate:nil];
+}
+
 
 @end

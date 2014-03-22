@@ -63,6 +63,14 @@ static NSString * kCommandKeyAuthRightDesc    = @"authRightDescription";
                     @"prompt shown when user is required to authorize to uninstall"
                 )
             },
+                NSStringFromSelector(@selector(version:withReply:)) : @{
+                kCommandKeyAuthRightName    : @"BradJasper.focus.version",
+                kCommandKeyAuthRightDefault : @kAuthorizationRuleClassAllow,
+                kCommandKeyAuthRightDesc    : NSLocalizedString(
+                    @"Focus is trying to get helper tool version",
+                    @"prompt shown when user is required to authorize to get version"
+                )
+            },
         };
     });
     return sCommandInfo;

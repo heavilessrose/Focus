@@ -157,12 +157,27 @@
     
     NSError *error = [self checkAuthorization:authData command:_cmd];
     if (error == nil) {
-        LogMessageCompat(@"Doing it");
+        LogMessageCompat(@"Starting uninstall");
         InstallerManager *installerManager = [[InstallerManager alloc] init];
         [installerManager uninstall];
     }
     
     reply(error);
+}
+
+
+- (void)version:(NSData *)authData withReply:(void(^)(NSError * error, NSString *version))reply
+{
+    LogMessageCompat(@"Helper: version");
+    
+    NSError *error = [self checkAuthorization:authData command:_cmd];
+    
+    if (error == nil) {
+        NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+        reply(error, version);
+    }
+    
+    reply(error, nil);
 }
 
 @end
