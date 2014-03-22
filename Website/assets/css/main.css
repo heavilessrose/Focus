@@ -171,10 +171,6 @@ a:after {
 }
 
 
-.questions {
-  margin-top: 150px;
-}
-
 .teaser {
   color: white;
 }
@@ -389,6 +385,10 @@ a:after {
 }
 
 .press {
+    margin-top: 100px;
+}
+
+.questions {
     margin-top: 100px;
 }
 
