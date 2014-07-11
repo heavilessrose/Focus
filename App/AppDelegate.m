@@ -111,6 +111,7 @@
 // Setup the focus:// URL scheme to trigger events in Focus (currently focus/unfocus/uninstall). Check Focus help for more info
 - (void)setupURLScheme
 {
+    NSLog(@"Setting up URL scheme");
     NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
     [em setEventHandler:self andSelector:@selector(getUrl:withReplyEvent:) forEventClass:kInternetEventClass andEventID:kAEGetURL];
 }
@@ -619,6 +620,11 @@
     [[NSWorkspace sharedWorkspace] openURL:helpFile];
 }
 
+- (IBAction)clickedUninstallFocus:(id)sender {
+#pragma unused(sender)
+    [self clickedUninstallFocus];
+}
+
 - (void)clickedUninstallFocus {
     
     NSAlert *alertBox = [[NSAlert alloc] init];
@@ -796,6 +802,9 @@
     NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
     NSURL *url = [NSURL URLWithString:urlStr];
     NSString *action = [[url host] lowercaseString];
+    
+    NSLog(@"Focus got URL = %@", urlStr);
+    
 
     // hooks for focus://<action>
     if ([action isEqualToString:@"focus"]) {
