@@ -131,5 +131,12 @@
       <p class="about">This website has been blocked by <a href="http://heyfocus.com/?utm_source=focus_template">Focus</a> because it's distracting&mdash;get back to work!</p>
     </div>
 
+    <script>
+        window.onpageshow = function(event) {
+            if (event.persisted) {
+                window.location.reload()
+            }
+        };
+    </script>
   </body>
 </html>

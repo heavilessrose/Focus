@@ -7,7 +7,18 @@ import optparse, socket, thread
 
 class ProxyConnectionHandler(object):
     def __init__(self, connection, address, timeout=60, content="Get back to work!", **kwargs):
-        connection.send("HTTP/1.1 200 OK\r\nContent-type: text/html\r\nContent-length: %d\r\n\r\n%s" % (len(content), content))
+        
+        headers = [
+            "HTTP/1.1 200 OK",
+            "Content-type: text/html",
+            "Cache-Control: no-cache, max-age=0, must-revalidate, no-store",
+            "Content-length: %d" % len(content),
+        ]
+            
+        headerstr = "\r\n".join(headers)
+        body = "%s\r\n\r\n%s" % (headerstr, content)
+                   
+        connection.send(body)
         connection.close()
 
 def start_proxy(host='localhost', port=8401, content="Get back to work!"):
