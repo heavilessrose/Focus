@@ -96,7 +96,7 @@
     self.httpProxy = [FocusHTTProxy setup];
     
     [self checkIfFocusOnStartup];
-    [self checkIfHelperToolVersionMatches];
+//    [self checkIfHelperToolVersionMatches];
     
     [self trackEvent:@"load"];
 }

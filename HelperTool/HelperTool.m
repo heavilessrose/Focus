@@ -119,36 +119,30 @@
 
 - (void)focus:(NSData *)authData blockedHosts:(NSArray *)hosts withReply:(void(^)(NSError * error))reply
 {
+#pragma unused(authData)
+    
     LogMessageCompat(@"Helper: focusing");
     
-    NSError *error = [self checkAuthorization:authData command:_cmd];
-    if (error == nil) {
-        
-        InstallerManager *installerManager = [[InstallerManager alloc] init];
-        if (![installerManager PACDirExists]) {
-            [installerManager installPACDirectory];
-        }
-        
-        Focus *focus = [[Focus alloc] initWithHosts:hosts];
-        [focus focus];
-    } else {
-        LogMessageCompat(@"Helper error while focusing = %@", error);
+    InstallerManager *installerManager = [[InstallerManager alloc] init];
+    if (![installerManager PACDirExists]) {
+        [installerManager installPACDirectory];
     }
     
-    reply(error);
+    Focus *focus = [[Focus alloc] initWithHosts:hosts];
+    [focus focus];
+    
+    reply(nil);
 }
 
 - (void)unfocus:(NSData *)authData withReply:(void(^)(NSError * error))reply
 {
+#pragma unused(authData)
     LogMessageCompat(@"Helper: unfocusing");
     
-    NSError *error = [self checkAuthorization:authData command:_cmd];
-    if (error == nil) {
-        Focus *focus = [[Focus alloc] init];
-        [focus unfocus];
-    }
+    Focus *focus = [[Focus alloc] init];
+    [focus unfocus];
     
-    reply(error);
+    reply(nil);
 }
 
 - (void)uninstall:(NSData *)authData withReply:(void(^)(NSError * error))reply
