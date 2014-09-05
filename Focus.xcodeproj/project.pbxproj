@@ -24,10 +24,8 @@
 		A2221A771861196A009AE3E9 /* LoggerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A21B615E184140A20085C4B7 /* LoggerClient.m */; };
 		A2221A7818611986009AE3E9 /* LoggerClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A21B615E184140A20085C4B7 /* LoggerClient.m */; };
 		A2221A7B1861526C009AE3E9 /* InstallerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A2D57B211842C05B008744DC /* InstallerManager.m */; };
-		A2221A7D186152AF009AE3E9 /* LaunchAtLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = A222241F1847CAF8008FD525 /* LaunchAtLoginController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w"; }; };
 		A2221A7E1861538C009AE3E9 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4C372F715E7D4D4007554D3 /* ServiceManagement.framework */; };
 		A2221A7F186153AA009AE3E9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4ED7B8315E79B83002AD912 /* Cocoa.framework */; };
-		A22224211847CAF8008FD525 /* LaunchAtLoginController.m in Sources */ = {isa = PBXBuildFile; fileRef = A222241F1847CAF8008FD525 /* LaunchAtLoginController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc -w"; }; };
 		A2263C2618DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
 		A2263C2718DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
 		A2263C2818DBDE11009525AA /* libKeenClient-Aggregate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A2263C2518DBDE11009525AA /* libKeenClient-Aggregate.a */; };
@@ -781,7 +779,6 @@
 				A2221A7818611986009AE3E9 /* LoggerClient.m in Sources */,
 				E4CD036D15E7A2C300FDC22C /* main.m in Sources */,
 				A283BEBA1846C74600A45D96 /* NetworkSetupManager.m in Sources */,
-				A2221A7D186152AF009AE3E9 /* LaunchAtLoginController.m in Sources */,
 				A283BEBB1846C74A00A45D96 /* PACFileManager.m in Sources */,
 				E4CBCCE715EBA7550081DF5C /* HelperTool.m in Sources */,
 				A2221A7B1861526C009AE3E9 /* InstallerManager.m in Sources */,
@@ -805,7 +802,6 @@
 				A2CF79C9184565AA00A1566A /* NetworkSetupManager.m in Sources */,
 				A2D57B0318428439008744DC /* FFYDaemonController.m in Sources */,
 				A2CF79C31845656600A1566A /* PACFileManager.m in Sources */,
-				A22224211847CAF8008FD525 /* LaunchAtLoginController.m in Sources */,
 				A2D57B221842C05B008744DC /* InstallerManager.m in Sources */,
 				A2703165184D90BE00D11B81 /* FocusHTTProxy.m in Sources */,
 				E4CBCCEC15EBBB8D0081DF5C /* Common.m in Sources */,

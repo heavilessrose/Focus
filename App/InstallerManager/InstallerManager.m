@@ -13,7 +13,6 @@
 
 #import "Focus.h"
 #import "Common.h"
-#import "LaunchAtLoginController.h"
 #import "NSTask+runCommand.h"
 
 @interface InstallerManager () {
@@ -168,22 +167,17 @@
 
 - (bool)installAutoLaunch
 {
-    LaunchAtLoginController *launchController = [[LaunchAtLoginController alloc] init];
-    [launchController setLaunchAtLogin:YES];
     return YES;
 }
 
 - (bool)uninstallAutoLaunch
 {
-    LaunchAtLoginController *launchController = [[LaunchAtLoginController alloc] init];
-    [launchController setLaunchAtLogin:NO];
     return YES;
 }
 
 - (bool)willAutoLaunch
 {
-    LaunchAtLoginController *launchController = [[LaunchAtLoginController alloc] init];
-    return [launchController launchAtLogin];
+    return NO;
 }
 
 @end
